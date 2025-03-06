@@ -52,7 +52,7 @@ export async function POST(req: NextRequest){
                     content: `${systemInstructions} \n\nText:\n${text}`,
                 },
             ],
-            temperature: 1,
+            temperature: 0,
         });
 
         return NextResponse.json({ result: response.choices[0].message.content });
