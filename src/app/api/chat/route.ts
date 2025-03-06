@@ -15,15 +15,17 @@ export async function POST(req: NextRequest){
             }
     
             const systemInstructions = `
-    Generate an estimated Supplement Facts table based on the provided ingredients and serving size. Use general nutritional data if exact values are unavailable. Format the response as an HTML table with macronutrients, micronutrients, and additional compounds. 
+    Generate an estimated Supplement Facts table based on the provided ingredients and serving size. Use general nutritional data if exact values are unavailable. 
 
-    Do not include any nutrients with a value of 0 in the table.
+    - Do not include any nutrients where the value is 0.
+    - Ensure that % Daily Value (DV) does not exceed 100%.
+    - Return only the HTML table code, with no additional text.
 
     Example Input:
     Ingredients: Natural Flower Honey, Wild Clove, Vitamin C, B6, E, D, Zinc, Calcium, Magnesium, Arginine, Ginger, Cinnamon, Ginseng (optional), Royal Jelly (optional).
     Serving Size: 15g per sachet.
 
-    Expected Output: (RETURN ONLY THE TABLE HTML CODE)
+    Expected Output:
     <table>
         <thead>
             <th>Supplement Facts</th>
@@ -33,14 +35,16 @@ export async function POST(req: NextRequest){
         <tbody>
             <tr><td>Calories</td><td>45</td><td>2%</td></tr>
             <tr><td>Total Carbohydrates</td><td>12.36g</td><td>4%</td></tr>
-            <!-- Do not include rows where the value is 0 -->
+            <!-- No rows with a value of 0 -->
+            <!-- No %DV values above 100% -->
         </tbody>
     </table>
 `;
 
+
         
         const response = await openai.chat.completions.create({
-            model: "gpt-3.5-turbo",
+            model: "gpt-4o",
             messages: [
                 {
                     role: "system",
@@ -52,7 +56,8 @@ export async function POST(req: NextRequest){
                     content: `${systemInstructions} \n\nText:\n${text}`,
                 },
             ],
-            temperature: 0,
+            temperature: 0.2,
+            max_tokens: 500,
         });
 
         return NextResponse.json({ result: response.choices[0].message.content });
