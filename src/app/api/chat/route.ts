@@ -15,26 +15,29 @@ export async function POST(req: NextRequest){
             }
     
             const systemInstructions = `
-            Generate an estimated Supplement Facts table based on the provided ingredients and serving size. Use general nutritional data if exact values are unavailable. Format the response as an HTML table with macronutrients, micronutrients, and additional compounds.
-        
-            Example Input:
-            Ingredients: Natural Flower Honey, Wild Clove, Vitamin C, B6, E, D, Zinc, Calcium, Magnesium, Arginine, Ginger, Cinnamon, Ginseng (optional), Royal Jelly (optional).
-            Serving Size: 15g per sachet.
-        
-            Expected Output: (RETURN ONLY THE TABLE HTML CODE)
-            <table>
-                <thead>
-                    <th>Supplement Facts</th>
-                    <th>Per Serving 15g</th>
-                    <th>% Daily (DV)</th>
-                </thead>
-                <tbody>
-                    <tr><td>Calories</td><td>45</td><td>2%</td></tr>
-                    <tr><td>Total Carbohydrates</td><td>12.36g</td><td>4%</td></tr>
-                    ...
-                </tbody>
-            </table>
-        `;
+    Generate an estimated Supplement Facts table based on the provided ingredients and serving size. Use general nutritional data if exact values are unavailable. Format the response as an HTML table with macronutrients, micronutrients, and additional compounds. 
+
+    Do not include any nutrients with a value of 0 in the table.
+
+    Example Input:
+    Ingredients: Natural Flower Honey, Wild Clove, Vitamin C, B6, E, D, Zinc, Calcium, Magnesium, Arginine, Ginger, Cinnamon, Ginseng (optional), Royal Jelly (optional).
+    Serving Size: 15g per sachet.
+
+    Expected Output: (RETURN ONLY THE TABLE HTML CODE)
+    <table>
+        <thead>
+            <th>Supplement Facts</th>
+            <th>Per Serving 15g</th>
+            <th>% Daily (DV)</th>
+        </thead>
+        <tbody>
+            <tr><td>Calories</td><td>45</td><td>2%</td></tr>
+            <tr><td>Total Carbohydrates</td><td>12.36g</td><td>4%</td></tr>
+            <!-- Do not include rows where the value is 0 -->
+        </tbody>
+    </table>
+`;
+
         
         const response = await openai.chat.completions.create({
             model: "gpt-3.5-turbo",
