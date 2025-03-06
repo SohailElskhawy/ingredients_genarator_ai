@@ -6,29 +6,39 @@ export default function Home() {
     const [result, setResult] = useState<string>("");
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const generateIngredients = async (text: string) => {
-        const response = await fetch("/api/chat", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ text }),
-        });
-
-        if (!response.ok) {
-            throw new Error("Failed to generate supplement facts");
+        try {
+            const response = await fetch("/api/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text }),
+            });
+    
+            if (!response.ok) {
+                throw new Error("Failed to generate supplement facts");
+            }
+    
+            const data = await response.json();
+            return data.result;
+        } catch (error) {
+            console.error("OpenAI API Error:", error);
+            return "Failed to generate supplement facts";
         }
-
-        const data = await response.json();
-        return data.result;
     };
 
 
 
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+        try {
+            e.preventDefault();
         setIsLoading(true);
         const response = await generateIngredients(prompt);
         const cleanResponse = response.replace(/```(html)?/g, "");
         setResult(cleanResponse);
         setIsLoading(false);
+        } catch (error) {
+            setIsLoading(false);
+            console.error("OpenAI API Error:", error);
+        }
     };
 
     return <div className="flex flex-col items-center justify-start min-h-screen py-2"
