@@ -4,7 +4,7 @@ import Loading from "./components/Loading";
 export default function Home() {
     const [prompt, setPrompt] = useState<string>("");
     const [result, setResult] = useState<string>("");
-    const [isLoading, setIsLoading] = useState<boolean>(true    );
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const generateIngredients = async (text: string) => {
         const response = await fetch("/api/chat", {
             method: "POST",
