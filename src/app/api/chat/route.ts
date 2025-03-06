@@ -61,8 +61,8 @@ Expected Output:
                     content: `${systemInstructions} \n\nText:\n${text}`,
                 },
             ],
-            temperature: 0.2,
-            max_tokens:800,
+            temperature: 0.1,
+            max_tokens:500,
         });
 
         return NextResponse.json({ result: response.choices[0].message.content });
