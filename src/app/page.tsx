@@ -1,9 +1,10 @@
 "use client";
 import { useState } from "react";
-
+import Loading from "./components/Loading";
 export default function Home() {
     const [prompt, setPrompt] = useState<string>("");
     const [result, setResult] = useState<string>("");
+    const [isLoading, setIsLoading] = useState<boolean>(true    );
     const generateIngredients = async (text: string) => {
         const response = await fetch("/api/chat", {
             method: "POST",
@@ -23,9 +24,11 @@ export default function Home() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsLoading(true);
         const response = await generateIngredients(prompt);
         const cleanResponse = response.replace(/```(html)?/g, "");
         setResult(cleanResponse);
+        setIsLoading(false);
     };
 
     return <div className="flex flex-col items-center justify-start min-h-screen py-2"
@@ -55,5 +58,6 @@ export default function Home() {
                 </button>
             </form>
         </div>
+        {isLoading && <Loading />}
     </div>
 }

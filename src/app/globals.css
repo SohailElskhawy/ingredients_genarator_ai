@@ -18,6 +18,16 @@ th, td {
   padding: 8px;
 }
 
+button{
+  cursor: pointer;
+  transition: background-color 0.3s;
+  &:hover{
+    background-color: #17379e;
+  }
+}
+
+
+
 
 @media print {
   .no-print {
