@@ -29,11 +29,16 @@ export default function Home() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         try {
-            e.preventDefault();
+        e.preventDefault();
         setIsLoading(true);
+        if (!prompt) {
+            setIsLoading(false);
+            return;
+        }
         const response = await generateIngredients(prompt);
         const cleanResponse = response.replace(/```(html)?/g, "");
         setResult(cleanResponse);
+        setPrompt("");
         setIsLoading(false);
         } catch (error) {
             setIsLoading(false);
