@@ -15,36 +15,41 @@ export async function POST(req: NextRequest){
             }
     
             const systemInstructions = `
-    Generate an estimated Supplement Facts table based on the provided ingredients and serving size. Use general nutritional data if exact values are unavailable. 
+Generate an estimated Supplement Facts table based on the provided ingredients and serving size. Use general nutritional data if exact values are unavailable. 
 
-    - Do not include any nutrients where the value is 0.
-    - Ensure that % Daily Value (DV) does not exceed 100%.
-    - Return only the HTML table code, with no additional text.
+- Do not include any nutrients where the value is 0.
+- Ensure that % Daily Value (DV) does not exceed 100%.
+- List all relevant macronutrients (calories, carbohydrates, proteins, fats) and micronutrients (vitamins, minerals, amino acids, herbal extracts, etc.).
+- If an ingredient is present but its nutritional value is unknown, estimate based on similar known ingredients.
+- Format the output **strictly as an HTML table**, without any additional text.
 
-    Example Input:
-    Ingredients: Natural Flower Honey, Wild Clove, Vitamin C, B6, E, D, Zinc, Calcium, Magnesium, Arginine, Ginger, Cinnamon, Ginseng (optional), Royal Jelly (optional).
-    Serving Size: 15g per sachet.
+Example Input:
+Ingredients: Natural Flower Honey, Wild Clove, Vitamin C, B6, E, D, Zinc, Calcium, Magnesium, Arginine, Ginger, Cinnamon, Ginseng (optional), Royal Jelly (optional).
+Serving Size: 15g per sachet.
 
-    Expected Output:
-    <table>
-        <thead>
-            <th>Supplement Facts</th>
-            <th>Per Serving 15g</th>
-            <th>% Daily (DV)</th>
-        </thead>
-        <tbody>
-            <tr><td>Calories</td><td>45</td><td>2%</td></tr>
-            <tr><td>Total Carbohydrates</td><td>12.36g</td><td>4%</td></tr>
-            <!-- No rows with a value of 0 -->
-            <!-- No %DV values above 100% -->
-        </tbody>
-    </table>
+Expected Output:
+<table>
+    <thead>
+        <th>Supplement Facts</th>
+        <th>Per Serving 15g</th>
+        <th>% Daily (DV)</th>
+    </thead>
+    <tbody>
+        <tr><td>Calories</td><td>45</td><td>2%</td></tr>
+        <tr><td>Total Carbohydrates</td><td>12.36g</td><td>4%</td></tr>
+        <tr><td>Protein</td><td>0.5g</td><td>1%</td></tr>
+        <tr><td>Vitamin C</td><td>25mg</td><td>28%</td></tr>
+        <tr><td>Calcium</td><td>20mg</td><td>2%</td></tr>
+        ...
+    </tbody>
+</table>
 `;
+
 
 
         
         const response = await openai.chat.completions.create({
-            model: "gpt-3.5-turbo",
+            model: "gpt-4-turbo",
             messages: [
                 {
                     role: "system",
@@ -57,7 +62,7 @@ export async function POST(req: NextRequest){
                 },
             ],
             temperature: 0.2,
-            max_tokens: 500,
+            max_tokens:800,
         });
 
         return NextResponse.json({ result: response.choices[0].message.content });
